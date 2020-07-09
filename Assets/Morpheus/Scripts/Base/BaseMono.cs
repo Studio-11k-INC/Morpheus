@@ -8,7 +8,10 @@ public class BaseMono : MonoBehaviour
 	public List<Listener> Listener;	
 
 	public GameEventMessage EventMessage;
-	public System.Object CallbackObject; 
+	public System.Object CallbackObject;
+
+	public eConsoleLogging ConsoleLogging;
+	public string LogMessage;
 	
 	public virtual void Awake()
 	{	
@@ -37,6 +40,12 @@ public class BaseMono : MonoBehaviour
 		}
 
 		return;
-	}	
+	}
+
+	public void Log(string log)
+	{
+		LogMessage = log;
+		GameEventMessage.SendEvent(eMessages.LOG.ToString(), this);
+	}
 }
    

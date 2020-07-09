@@ -32,3 +32,6 @@ _ReSharper*/
 packages/
 library/
 logs/
+Data/
+/Data/Test/Progress.json
+/Temp

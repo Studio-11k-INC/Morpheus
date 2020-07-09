@@ -333,8 +333,10 @@
     <Compile Include="Assets\Matrix\Models\Progress.cs" />
     <Compile Include="Assets\Matrix\Models\ProgressStateCallback.cs" />
     <Compile Include="Assets\Matrix\Models\StatePrefab.cs" />
+    <Compile Include="Assets\Matrix\Objects\ConsoleLogging.cs" />
     <Compile Include="Assets\Matrix\Scripts\Managers\ArtifactManager.cs" />
     <Compile Include="Assets\Matrix\Scripts\Managers\ProgressManager.cs" />
+    <Compile Include="Assets\Matrix\Scripts\Managers\WallSegmentManager.cs" />
     <Compile Include="Assets\Matrix\Scripts\Types.cs" />
     <Compile Include="Assets\Matrix\Scripts\UI\PointButton.cs" />
     <Compile Include="Assets\Matrix\Scripts\UI\PointLine.cs" />

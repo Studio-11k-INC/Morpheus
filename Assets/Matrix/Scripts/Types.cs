@@ -5,8 +5,11 @@
     ARTIFACTS,
     COPY_GEO,
     COPY_ARTIFACTS,
+    WALLSEGMENTS,
     END
 }
+
+
 
 public enum eArtifactExceptions
 {
@@ -26,4 +29,20 @@ public enum eDirections
     EAST,
     WEST,
     NA
+}
+
+public enum eStateDebuging
+{
+    PROGRESS,
+    ARTIFACTS,
+    WALLSEGMENTS,
+}
+
+public enum eConsoleLogging
+{
+    NA,
+    DEBUG,
+    WARNING,
+    ERROR,
+    END
 }

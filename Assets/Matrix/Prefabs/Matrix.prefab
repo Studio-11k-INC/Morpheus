@@ -134,19 +134,91 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - Message: 911
+    Handler:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 344904682330929919}
+          m_MethodName: Log
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - Message: 516
+    Handler:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 344904682330929919}
+          m_MethodName: ArtifactComplete
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - Message: 550
+    Handler:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 344904682330929919}
+          m_MethodName: WallSegments
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  ConsoleLogging: 0
+  LogMessage: 
   ProgressDataFile: Progress.json
   Geometry_Copy: Geometry_Copy.json
   Geometry_ArtifactsRemoved: Geometry_ArtifactsRemoved.json
+  Geometry_WallSegments: Geometry_WallSegments
   State: 0
   ProgressStateToCallback:
   - Deferred: 0
     State: 1
     Callback: 506
+  - Deferred: 0
+    State: 5
+    Callback: 550
   ProgressParent: {fileID: 954858351223537208}
   ProgressManagerStatePrefabs:
   - State: 2
     Prefab: {fileID: 1789809154694866131, guid: ba91eb76cacdb814fb57b1e1f65ad685,
       type: 3}
+  - State: 5
+    Prefab: {fileID: 8568963200013048417, guid: f08d0970ad74f9b468d6f7a4437d6607,
+      type: 3}
+  DeleteProgressOnLoad: 0
+  DataPath: 
+  MinPointDistance: 2
+  Artifact_Headless: 0
+  Artifacts_FullAuto: 1
+  Artfifact_WallByWall: 0
+  Artifacts_PointByPoint: 0
+  WallSegment_Headless: 0
+  WallSegment_FullAuto: 0
+  WallSegment_WallByWall: 0
+  WallSegment_PointByPoint: 0
+  ConsoleLoggingList:
+  - StateDebuging: 0
+    LoggingType: 1
+  - StateDebuging: 1
+    LoggingType: 1
+  - StateDebuging: 2
+    LoggingType: 1
 --- !u!1 &547987417604175491
 GameObject:
   m_ObjectHideFlags: 0

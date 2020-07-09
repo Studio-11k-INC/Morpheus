@@ -71,4 +71,9 @@ public class WallDataManager : MonoBehaviour
     {
         GameEventMessage.SendEvent(eMessages.PROGRESS_ARTIFACTS.ToString());
     }
+
+    public void WallSegments()
+    {
+        GameEventMessage.SendEvent(eMessages.PROGRESS_WALLSEGMENT.ToString());
+    }
 }

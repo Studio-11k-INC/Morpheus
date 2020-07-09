@@ -18,6 +18,7 @@ public partial class Walls
 
 public class Point
 {
+	public int PointId { get; set; }
 	public float X { get; set; }
 	public float Y { get; set; }
 	public eArtifactExceptions AE { get; set; }
@@ -25,7 +26,10 @@ public class Point
 
 public class WallSeg
 {
+	public int WallId { get; set; }
+	public int PointCount { get; set; }
 	public List<Point> Points { get; set; }	
+
 }
 
 public class WallData
