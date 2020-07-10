@@ -356,6 +356,10 @@ public class WallSegmentManager : BaseMono
         int currentPoint = 0;
         bool x = false;
         Point point;
+        int segmentPointCount = 3;
+        int minPoints = 5;
+        bool done = false;
+        int walls = Walls.WallSegments.Count;
         if (Walls.WallSegments[CurrentWall].Points.Count > 5)
         {
             WallSeg copySegment = new WallSeg()
@@ -379,10 +383,10 @@ public class WallSegmentManager : BaseMono
                 };
 
                 Point p1 = copySegment.Points[currentPoint];
-                p1.PointId = -1;
+                p1.RemoveMe = true;
 
                 point = new Point()
-                {                    
+                {
                     X = p1.X,
                     Y = p1.Y,
                 };
@@ -391,8 +395,10 @@ public class WallSegmentManager : BaseMono
 
                 do
                 {
-                    //currentPoint = GetNextPoint(x, currentPoint, Walls.WallSegments[CurrentWall].Points);
-                    currentPoint = GetNextPoint(x, currentPoint, copySegment.Points);
+                    if(segment.Points.Count == 1)
+                        currentPoint = GetNextPointMax(x, segment.Points[0], currentPoint, copySegment.Points);
+                    else
+                        currentPoint = GetNextPointMin(x, segment.Points[1], currentPoint, copySegment.Points);
 
                     if (currentPoint != -1)
                     {
@@ -400,7 +406,34 @@ public class WallSegmentManager : BaseMono
                         {
                             X = copySegment.Points[currentPoint].X,
                             Y = copySegment.Points[currentPoint].Y,
+                            DirectionFromPrevPoint = copySegment.Points[currentPoint].DirectionFromPrevPoint,
+                            DistanceToPrevPoint = copySegment.Points[currentPoint].DistanceToPrevPoint,
                         };
+
+#if false
+                        if (segment.Points.Count == 2)
+                        {
+                            if (point.DistanceToPrevPoint > 9.0f)
+                            {
+                                switch (point.DirectionFromPrevPoint)
+                                {
+                                    case eDirections.NORTH:
+                                        point.Y = segment.Points[1].Y + 9.0f;
+                                        break;
+                                    case eDirections.EAST:
+                                        point.X = segment.Points[1].X + 9.0f;
+                                        break;
+                                    case eDirections.SOUTH:
+                                        point.Y = segment.Points[1].Y - 9.0f;
+                                        break;
+                                    case eDirections.WEST:
+                                        point.X = segment.Points[1].X - 9.0f;
+                                        break;
+                                }
+                            }
+
+                        }
+#endif
 
                         segment.Points.Add(point);
                     }
@@ -409,11 +442,11 @@ public class WallSegmentManager : BaseMono
 
                     x = !x;
                 }
-                while (segment.Points.Count < 3);
+                while (segment.Points.Count < segmentPointCount);
 
                 int index1 = x ? 2 : 0;
                 int index2 = x ? 0 : 2;
-                
+
                 point = new Point()
                 {
                     X = segment.Points[index1].X,
@@ -426,7 +459,7 @@ public class WallSegmentManager : BaseMono
                     X = segment.Points[0].X,
                     Y = segment.Points[0].Y
                 };
-                segment.Points.Add(point);                
+                segment.Points.Add(point);
 
                 Walls.WallSegments.Add(segment);
                 count++;
@@ -436,31 +469,42 @@ public class WallSegmentManager : BaseMono
 
                 foreach (Point p in Walls.WallSegments[CurrentWall].Points)
                 {
-                    if (p.PointId >= 0)
+                    if (!p.RemoveMe)
                         copySegment.Points.Add(p);
                 }
 
                 float angle = ArtifactExceptions.GetAngle(new Vector2(copySegment.Points[0].X, copySegment.Points[0].Y), new Vector2(copySegment.Points[1].X, copySegment.Points[1].Y));
                 x = angle == 90.0f;
+#if false
             }
-            while (copySegment.Points.Count >= 5);
+
+            while(copySegment.Points.Count >= minPoints);
+#else
+                done = Walls.WallSegments.Count == walls + 2;
+            }
+            while (!done);
+#endif
+
         }
         
         Log("************Fix End******************");
         //GameEventMessage.SendEvent(eMessages.PROGRESS_WALLSEGMENT_PROCESS.ToString());
     }
 
-    int GetNextPoint(bool x, int currentPoint, List<Point> points)
+    int GetNextPointMax(bool x, Point p1, int currentPoint, List<Point> points)
     {
         int retVal = -1;
-        Point p1 = points[currentPoint];
+        //Point p1 = points[currentPoint];
         float farthest = 0.0f;
         int prevIndex = -1;
-        for(int i = 0; i < points.Count; i++)
+        for(int i = 1; i < points.Count; i++)
         {
             if (i > currentPoint)            
-            {                
+            {   
                 float distance = ArtifactExceptions.GetDistance(new Vector2(p1.X, p1.Y), new Vector2(points[i].X, points[i].Y));
+                float angle = ArtifactExceptions.GetAngle(new Vector2(p1.X, p1.Y), new Vector2(points[i].X, points[i].Y));
+                eDirections direction = ArtifactExceptions.GetDirection(angle);
+
                 if (x)
                 {
                     if (points[i].X == p1.X)
@@ -468,10 +512,16 @@ public class WallSegmentManager : BaseMono
                         if (distance > farthest)
                         {
                             farthest = distance;
-                            points[i].PointId = -1;
-                            
+                            points[i].DistanceToPrevPoint = distance;
+                            points[i].DirectionFromPrevPoint = direction;
+                            points[i].RemoveMe = true;
+
                             if (prevIndex > 0)
-                                points[prevIndex].PointId = prevIndex;
+                            {
+                                points[prevIndex].DistanceToPrevPoint = 0.0f;
+                                points[prevIndex].RemoveMe = false;
+                            }
+                            
                             prevIndex = i;
 
                             retVal = i;
@@ -484,11 +534,14 @@ public class WallSegmentManager : BaseMono
                     {
                         if (distance > farthest)
                         {
-                            farthest = distance;                            
-                            points[i].PointId = -1;
+                            farthest = distance;
+                            points[i].DistanceToPrevPoint = distance;
+                            points[i].DirectionFromPrevPoint = direction;
+                            points[i].RemoveMe = true;
 
                             if (prevIndex > 0)
-                                points[prevIndex].PointId = prevIndex;
+                                points[prevIndex].RemoveMe = false;
+
                             prevIndex = i;
 
                             retVal = i;
@@ -497,16 +550,69 @@ public class WallSegmentManager : BaseMono
                 }
             }
         }
-#if false
-        if(p2 != null)
+
+        return retVal;
+    }
+
+    int GetNextPointMin(bool x, Point p1, int currentPoint, List<Point> points)
+    {
+        int retVal = -1;
+        //Point p1 = points[currentPoint];
+        float min = 10.0f;
+        int prevIndex = -1;
+        for (int i = 1; i < points.Count; i++)
         {
-            retVal = new Point()
-            {                
-                X = p2.X,
-                Y = p2.Y
-            };
+            if (i > currentPoint)            
+            {
+                float distance = ArtifactExceptions.GetDistance(new Vector2(p1.X, p1.Y), new Vector2(points[i].X, points[i].Y));
+                float angle = ArtifactExceptions.GetAngle(new Vector2(p1.X, p1.Y), new Vector2(points[i].X, points[i].Y));
+                eDirections direction = ArtifactExceptions.GetDirection(angle);
+
+                if (x)
+                {
+                    if (points[i].X == p1.X)
+                    {
+                        if (distance < min)
+                        {
+                            min = distance;
+                            points[i].DistanceToPrevPoint = distance;
+                            points[i].DirectionFromPrevPoint = direction;
+                            points[i].RemoveMe = true;
+
+                            if (prevIndex > 0)
+                            {
+                                points[prevIndex].DistanceToPrevPoint = 0.0f;
+                                points[prevIndex].RemoveMe = false;
+                            }
+
+                            prevIndex = i;
+
+                            retVal = i;
+                        }
+                    }
+                }
+                else
+                {
+                    if (points[i].Y == p1.Y)
+                    {
+                        if (distance < min)
+                        {
+                            min = distance;
+                            points[i].DistanceToPrevPoint = distance;
+                            points[i].DirectionFromPrevPoint = direction;
+                            points[i].RemoveMe = true;
+
+                            if (prevIndex > 0)
+                                points[prevIndex].RemoveMe = false;
+
+                            prevIndex = i;
+
+                            retVal = i;
+                        }
+                    }
+                }
+            }
         }
-#endif
 
         return retVal;
     }

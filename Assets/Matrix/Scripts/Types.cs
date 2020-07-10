@@ -9,8 +9,6 @@
     END
 }
 
-
-
 public enum eArtifactExceptions
 {
     NA,
